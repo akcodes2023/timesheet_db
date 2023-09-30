@@ -1,12 +1,11 @@
-from django.utils import timezone
-from typing import Any
 from django.db import models
-from django.db.models import Q
+# from django.db.models import Q
 
 # Create your models here.
 
-# Project
-#  Model/Table
+# Project Model/Table
+
+
 class Project(models.Model):
     project = models.AutoField(primary_key=True)
     project_name = models.CharField(max_length=100)
@@ -60,22 +59,24 @@ class Project(models.Model):
 
     def __str__(self):
         return self.project_name
-    
 
 
+'''
 class Module(models.Model):
-     module = models.CharField(max_length=250, null=False)
-     module_description = models.CharField(max_length=250, null=False)
+    module = models.CharField(max_length=250, null=False)
+    module_description = models.CharField(max_length=250, null=False)
 
-     def __str__(self):
+    def __str__(self):
         return self.module
-    
+'''
+
 
 class Ticket(models.Model):
     ticket = models.AutoField(primary_key=True)
     ticket_description = models.CharField(max_length=250, null=False)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    reporter = models.CharField(max_length=100, null=False)
+    reporter_name = models.CharField(max_length=100, null=False)
+    reporter_email = models.CharField(max_length=100, null=False)
     reporter_contact = models.CharField(max_length=10, null=False)
 
     PRIORITY_CHOICES = (
@@ -88,22 +89,9 @@ class Ticket(models.Model):
     priority = models.CharField(
         max_length=50,
         choices=PRIORITY_CHOICES,
-        # unique=True,
         null=False,
     )
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['priority'],
-                name='unique_priority',
-            ),
-            models.CheckConstraint(
-                check=models.Q(priority__in=['Low', 'Medium', 'High', 'Show Stopper']),
-                name='valid_priority_check',
-            ),
-        ]
-    
     # Service type (For now only 2 type of service is included)
     CATEGORY_CHOICES = (
         ('Technical', 'Technical'),
@@ -120,23 +108,25 @@ class Ticket(models.Model):
         null=False,
     )
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['category'],
-                name='unique_category',
-            ),
-            models.CheckConstraint(
-                check=models.Q(category__in=['Technical', 'Functional', 'Error Messages', 'Reporting, Analytics and Forms','Custom Development']),
-                name='valid_category_check',
-            ),
-        ]
+    # module = models.ForeignKey(Module, on_delete=models.CASCADE)
 
-    module = models.ForeignKey(Module, on_delete=models.CASCADE)
+    MODULE_CHOICES = (
+        ('SAP SD', 'SAP SD'),
+        ('SAP PP', 'SAP PP'),
+        ('SAP MM', 'SAP MM'),
+        ('SAP FICO', 'SAP FICO'),
+        ('SAP ABAP', 'SAP ABAP'),
+    )
+
+    module = models.CharField(
+        max_length=20,
+        choices=MODULE_CHOICES,
+        null=False,
+    )
 
     def __str__(self):
         return f"Ticket #{self.ticket}"
-    
+
 
 '''
     SAPMODULE_CHOICES = (
@@ -168,21 +158,24 @@ class Ticket(models.Model):
 
     '''    
 
-class Timesheet(models.Model):
-        # week
-        timesheet = models.AutoField(primary_key=True)
-        date = models.DateField(null=True)
-        project = models.ForeignKey(Project, on_delete=models.CASCADE, null=False)
-        ticket = models.ForeignKey(
-            Ticket, 
-            on_delete=models.CASCADE, 
-            to_field='ticket',
-            null=False, 
-            related_name='your_ticket'
-            )
-        
 
-        '''
+class Timesheet(models.Model):
+    # week
+    timesheet = models.AutoField(primary_key=True)
+    raised_by = models.CharField(max_length=250, null=False)
+    date = models.DateField(null=True)
+    starttime = models.DateTimeField(null=False)
+    endtime = models.DateTimeField(null=False)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=False)
+    ticket = models.ForeignKey(
+        Ticket,
+        on_delete=models.CASCADE,
+        to_field='ticket',
+        null=False,
+        related_name='your_ticket'
+        )
+
+    '''
         module = models.ForeignKey(
             Ticket,
             on_delete=models.CASCADE, 
@@ -201,9 +194,121 @@ class Timesheet(models.Model):
             )
         '''
 
-        starttime = models.DateTimeField(null=False)
-        endtime = models.DateTimeField(null=False)
-        effort_description = models.CharField(max_length=250,null=False)
+    effort_description = models.CharField(max_length=250, null=False)
 
-        def __str__(self):
-            return f"{self.timesheet}"
+    APPROVALSTATUS_CHOICES = (
+        ('In Progress', 'In Progress'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+        ('In Dispute', 'In Dispute'),
+    )
+
+    approval_status = models.CharField(
+        max_length=20,
+        choices=APPROVALSTATUS_CHOICES,
+        null=False,
+        default="In Progress",
+    )
+
+    BILLABLESTATUS_CHOICES = (
+        ('Billable', 'Billable'),
+        ('Non Billable', 'Non Billable'),
+    )
+
+    billable_status = models.CharField(
+        max_length=20,
+        choices=BILLABLESTATUS_CHOICES,
+        null=False,
+        default="Billable",
+    )
+
+    total_hours = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+
+    def calculate_total_hours(self):
+        if self.starttime and self.endtime:
+            time_difference = self.endtime - self.starttime
+            total_seconds = time_difference.total_seconds()
+            total_hours = total_seconds / 3600  # 3600 seconds in an hour
+            self.total_hours = round(total_hours, 2)  # Round to 2 decimal places
+        else:
+            self.total_hours = None
+
+    def save(self, *args, **kwargs):
+        self.calculate_total_hours()  # Calculate total hours before saving
+        super().save(*args, **kwargs)  # Call the original save method
+
+    def __str__(self):
+        return f"Timesheet #{self.timesheet}"
+
+
+class Dispute(models.Model):
+    dispute = models.AutoField(primary_key=True)
+    timesheet = models.ForeignKey(Timesheet, on_delete=models.CASCADE, null=False)
+    description = models.CharField(max_length=250, null=False)
+    attachement = models.FileField(upload_to='Dispute_Documents/')  # Use FileField for documents
+
+    DISPUTESTATUS_CHOICES = (
+        ('Created', 'Created'),
+        ('In Review', 'In Review'),
+        ('Dispute Approved', 'Dispute Approved'),
+        ('Dispute Partially Approved', 'Dispute Partially Approved'),
+        ('Dispute Rejected', 'Dispute Rejected'),
+    )
+
+    dispute_status = models.CharField(
+        max_length=50,
+        choices=DISPUTESTATUS_CHOICES,
+        null=False,
+        default="Created",
+    )
+
+    def __str__(self):
+        return f"Dispute #{self.dispute}"
+
+
+class Meta:
+    constraints = [
+            models.CheckConstraint(
+                check=models.Q(priority__in=['Low',
+                                             'Medium',
+                                             'High',
+                                             'Show Stopper']),
+                name='valid_priority_check',
+            ),
+            models.CheckConstraint(
+                check=models.Q(category__in=['Technical',
+                                             'Functional',
+                                             'Error Messages',
+                                             'Reporting, Analytics and Forms',
+                                             'Custom Development']),
+                name='valid_category_check',
+            ),
+            models.CheckConstraint(
+                check=models.Q(module__in=['SAP SD',
+                                           'SAP PP',
+                                           'SAP MM',
+                                           'SAP FICO',
+                                           'SAP ABAP']),
+                name='valid_module_check',
+            ),
+            models.CheckConstraint(
+                check=models.Q(approval_status__in=['In Progress',
+                                                    'Approved',
+                                                    'Rejected',
+                                                    'In Dispute']),
+                name='valid_approval_status_check',
+            ),
+            models.CheckConstraint(
+                check=models.Q(billable_status__in=['Bilable',
+                                                    'Non Billable']),
+                name='valid_billable_status_check',
+            ),
+            models.CheckConstraint(
+                check=models.Q(dispute_status__in=['Created',
+                                                   'In Review',
+                                                   'Dispute Approved',
+                                                   'Dispute Partially Approved',
+                                                   'Dispute Rejected']),
+                name='valid_dispute_status_check',
+            ),
+        ]
