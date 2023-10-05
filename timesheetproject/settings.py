@@ -37,10 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'timesheetapp',
-    'ticketapp',
-    'employeeapp',
-    'projectapp',
+    'timesheet',
+    'ticket',
+    'profiles',
+    'project',
     'rest_framework',
     'rest_framework.authtoken',
 ]
@@ -50,11 +50,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'AuthenticateApp.custom_auth.GetTokenAuthentication',  # Replace with the actual path
-        # 'AuthenticateApp.custom_auth.PostTokenAuthentication',  # Replace with the actual path
         'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     # ...
 }
