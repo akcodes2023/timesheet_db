@@ -65,7 +65,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'timesheetproject.urls'
+ROOT_URLCONF = 'workforce_management.urls'
 
 TEMPLATES = [
     {
@@ -83,7 +83,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'timesheetproject.wsgi.application'
+WSGI_APPLICATION = 'workforce_management.wsgi.application'
 
 
 # Database
