@@ -8,10 +8,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import ProfilesSerializer, UsersSerializer
-
-
-'''
 from profiles.models import User
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_employee(request):
@@ -19,7 +18,6 @@ def get_employee(request):
         user = User.objects.all()
         serializer = ProfilesSerializer(user, many=True)
         return Response(serializer.data)
-'''
 
 
 @api_view(['GET'])

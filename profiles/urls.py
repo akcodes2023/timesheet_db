@@ -9,7 +9,7 @@ urlpatterns = [
     path('api/token/', CustomAuthToken.as_view(), name='get-auth-token'),
 
     # Path to be used to get the details of authenticated user (without token)
-    path('api/get-user/', get_user, name='get-employee'),
+    path('api/get/authenticated-user/', get_user, name='get-employee'),
 
     # Path to be used to get the employee details
     path('api/get-employee/', get_employee, name='get-employee'),
