@@ -2,12 +2,12 @@
 from rest_framework import serializers
 
 # import model from models.py
-from timesheet.models import Timesheet
+from timesheet.models import Worklog
 
 
 # Create a model serializer
-class TimesheetSerializer(serializers.ModelSerializer):
+class WorklogSerializer(serializers.ModelSerializer):
     # specify model and fields
     class Meta:
-        model = Timesheet
+        model = Worklog
         fields = '__all__'  # Serialize all fields in the Employee model

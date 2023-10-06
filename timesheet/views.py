@@ -6,16 +6,16 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .serializers import TimesheetSerializer
-from timesheet.models import Timesheet
+from .serializers import WorklogSerializer
+from timesheet.models import Worklog
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_timesheet(request):
     if request.method == 'GET':
-        timesheet = Timesheet.objects.all()
-        serializer = TimesheetSerializer(timesheet, many=True)
+        timesheet = Worklog.objects.all()
+        serializer = WorklogSerializer(timesheet, many=True)
         return Response(serializer.data)
 
 
@@ -46,7 +46,7 @@ def get_timesheet_bydate(request):
                 status=400
                 )
 
-        timesheets = Timesheet.objects.filter(
+        timesheets = Worklog.objects.filter(
             date__range=(
                     start_date,
                     end_date
@@ -62,7 +62,7 @@ def get_timesheet_bydate(request):
                 status=404
                 )
 
-        serializer = TimesheetSerializer(timesheets, many=True)
+        serializer = WorklogSerializer(timesheets, many=True)
         return Response(serializer.data)
 
 
@@ -73,7 +73,7 @@ def create_timesheet(request):
 
     if request.method == 'POST':
         # Handle POST request to create a new employee
-        serializer = TimesheetSerializer(data=request.data)
+        serializer = WorklogSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)  # 201 Created

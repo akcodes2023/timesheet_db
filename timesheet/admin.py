@@ -1,6 +1,6 @@
 from django.contrib import admin
 
 # Register your models here.
-from . models import Timesheet
+from . models import Worklog
 
-admin.site.register(Timesheet)
+admin.site.register(Worklog)

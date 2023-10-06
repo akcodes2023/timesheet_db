@@ -1,15 +1,15 @@
 from django.db import models
 
 
-class Timesheet(models.Model):
+class Worklog(models.Model):
     # week
-    timesheet = models.AutoField(primary_key=True)
+    worklog = models.AutoField(primary_key=True)
     date = models.DateField(null=True)
     starttime = models.TimeField(null=False)
     endtime = models.TimeField(null=True, blank=True,)
     title = approval_status = models.CharField(max_length=20, null=False)
     raised_by = models.ForeignKey(
-        'profiles.User',
+        'profiles.Profile',
         on_delete=models.CASCADE,
         null=False
         )
@@ -42,4 +42,4 @@ class Timesheet(models.Model):
     )
 
     def __str__(self):
-        return f"Timesheet #{self.timesheet}"
+        return f"Worklog #{self.worklog}"
