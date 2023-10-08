@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'project',
     'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -59,7 +58,6 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -67,7 +65,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ORIGIN_WHITELIST = [
+     'http://localhost:3000',
+     'https://expoundtechnivo.com',
+     'https://portal.expoundtechnivo.com',
+     'https://new.expoundtechnivo.com',
+ ]
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'workforce_management.urls'
 
