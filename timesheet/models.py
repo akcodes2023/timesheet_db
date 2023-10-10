@@ -31,6 +31,7 @@ class Worklog(models.Model):
     effort_description = models.CharField(max_length=250, null=False)
 
     APPROVALSTATUS_CHOICES = (
+        ('Submitted', 'Submitted'),
         ('Approved', 'Approved'),
         ('Rejected', 'Rejected'),
     )

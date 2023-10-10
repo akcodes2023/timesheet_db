@@ -14,7 +14,7 @@ class Profile(models.Model):
     email = models.EmailField(null=False)
     mobile_no = models.CharField(max_length=15, null=False)
     designation = models.CharField(max_length=20, null=False)
-    department = models.CharField(max_length=20, null=False)
+    # department = models.CharField(max_length=20, null=False)
     reporting_manager = models.ForeignKey(
         'self',
         on_delete=models.SET_NULL,
