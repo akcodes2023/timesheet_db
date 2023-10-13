@@ -8,18 +8,22 @@ from profiles.models import Profile
 
 # Create a model serializer
 class WorklogSerializer(serializers.ModelSerializer):
+    start_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    end_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
     # specify model and fields
     class Meta:
         model = Worklog
-        fields = '__all__'  # Serialize all fields in the Employee model
-
-
-"""
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = ('username', 'first_name', 'last_name', 'employee')
-"""
+        fields = (
+            'user',
+            'title',
+            'project',
+            'ticket',
+            'description',
+            'start_date',
+            'end_date'
+            )
+        # fields = '__all__'  # Serialize all fields in the Employee model
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -38,3 +42,24 @@ class ProfileSerializer(serializers.ModelSerializer):
             'employee',
             'missing_dates',
             )
+
+
+# Create a model serializer
+'''
+class GetWorklogSerializer(serializers.ModelSerializer):
+    # specify model and fields
+    task_name = serializers.CharField(source='title')  # Alias for the 'title' field
+    task_description = serializers.CharField(source='effort_description')
+    task_link = serializers.CharField(source='ticket')
+
+    class Meta:
+        model = Worklog
+        # fields = '__all__'  # Serialize all fields in the Employee model
+        fields = (
+            'task_name',
+            'task_description',
+            'task_link',
+            'start_time',
+            'end_time',
+        )
+'''

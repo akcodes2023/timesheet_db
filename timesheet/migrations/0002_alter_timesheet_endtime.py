@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='timesheet',
             name='endtime',
-            field=models.TimeField(blank=True, null=True),
+            field=models.TimeField(blank=True, null=True, default=None),
         ),
     ]
