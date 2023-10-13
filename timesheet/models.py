@@ -7,7 +7,7 @@ class Worklog(models.Model):
     date = models.DateField(null=True)
     starttime = models.TimeField(null=False)
     endtime = models.TimeField(null=True, blank=True,)
-    title = approval_status = models.CharField(max_length=20, null=False)
+    title = models.CharField(max_length=20, null=False)
     raised_by = models.ForeignKey(
         'profiles.Profile',
         on_delete=models.CASCADE,
@@ -36,10 +36,11 @@ class Worklog(models.Model):
         ('Rejected', 'Rejected'),
     )
 
-    approval_status = models.CharField(
+    status = models.CharField(
         max_length=20,
         choices=APPROVALSTATUS_CHOICES,
         null=False,
+        default='Submitted',
     )
 
     def __str__(self):
